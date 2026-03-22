@@ -2,6 +2,8 @@ import { useState, useEffect, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowDown, Github, Linkedin, Mail } from 'lucide-react';
 import ThreeBackground from './ThreeBackground';
+import Hero3D from './hero/Hero3D';
+import TypingAnimation from './hero/TypingAnimation';
 
 const Hero = ({ isDark = true }) => {
   const [currentRole, setCurrentRole] = useState(0);
@@ -70,6 +72,16 @@ const Hero = ({ isDark = true }) => {
 
   return (
     <section className={`relative min-h-screen flex items-center justify-center pt-20 overflow-hidden transition-colors duration-500 ${isDark ? '' : 'bg-gradient-to-br from-blue-50 to-purple-50'}`}>
+      {/* Use new 3D Hero in dark mode */}
+      {isDark ? (
+        <div className="absolute inset-0 w-full h-full">
+          <Hero3D />
+          <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+            <TypingAnimation />
+          </div>
+        </div>
+      ) : (
+        <>
       {/* Three.js Background - Only in dark mode */}
       {isDark && (
         <Suspense fallback={null}>
@@ -77,8 +89,13 @@ const Hero = ({ isDark = true }) => {
         </Suspense>
       )}
       
-      {/* Overlay for text readability */}
-      <div className={`absolute inset-0 z-[1] transition-colors duration-500 ${isDark ? 'bg-gradient-to-r from-dark-900/80 via-dark-900/50 to-transparent' : 'bg-white/30'}`} />
+        </>
+      )}
+      
+      {/* Overlay for text readability - only in light mode now */}
+      {isDark ? null : (
+        <div className="absolute inset-0 z-[1] transition-colors duration-500 bg-white/30" />
+      )}
       
       <div className="max-w-[1600px] mx-auto px-6 sm:px-12 lg:px-24 xl:px-32 w-full relative z-10">
         <motion.div
