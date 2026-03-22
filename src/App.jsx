@@ -57,8 +57,12 @@ function App() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.5 }}
-                  className={`min-h-screen transition-colors duration-500 ${isDark ? 'dark bg-dark-900' : 'bg-gray-50'}`}
+                  className={`min-h-screen transition-colors duration-500 ${isDark ? 'dark' : 'bg-gray-50'}`}
                   data-theme={isDark ? 'dark' : 'light'}
+                  style={isDark ? {
+                    background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #1e1b4b 70%, #0f172a 100%)',
+                    backgroundAttachment: 'fixed'
+                  } : {}}
                 >
                   {/* Global Effects */}
                   <ScrollProgress />

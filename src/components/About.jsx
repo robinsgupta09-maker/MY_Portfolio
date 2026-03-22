@@ -23,7 +23,7 @@ const About = ({ isDark = true }) => {
       y: 0,
       transition: {
         duration: 0.8,
-        ease: [0.4, 0, 0.2, 1],
+        ease: [0.6, -0.05, 0.01, 0.99],
       },
     },
   };
@@ -44,11 +44,11 @@ const About = ({ isDark = true }) => {
         >
           {/* Section Header */}
           <motion.div variants={itemVariants} className="mb-16 lg:mb-24">
-            <p className={`text-sm font-medium tracking-widest uppercase mb-6 ${isDark ? 'text-primary-400' : 'text-primary-600'}`}>
+            <p className={`text-sm font-medium tracking-widest uppercase mb-6 bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent ${isDark ? '' : 'from-purple-600 to-blue-600'}`}>
               About Me
             </p>
-            <h2 className={`text-5xl sm:text-6xl lg:text-7xl font-bold mb-8 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              Who I <span className="text-gradient">Am</span>
+            <h2 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-8">
+              Who I <span className="bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent">Am</span>
             </h2>
           </motion.div>
 
@@ -65,13 +65,13 @@ const About = ({ isDark = true }) => {
                 {highlights.map((stat) => (
                   <motion.div 
                     key={stat.label} 
-                    className={`text-center p-6 rounded-2xl ${isDark ? 'glass' : 'bg-white shadow-lg'}`}
-                    whileHover={{ y: -5 }}
+                    className={`text-center p-6 rounded-2xl backdrop-blur-sm transition-all duration-500 ${isDark ? 'bg-[rgba(30,41,59,0.6)] hover:bg-[rgba(30,41,59,0.8)] border border-[#334155]' : 'bg-white shadow-lg border border-purple-200/50'}`}
+                    whileHover={{ y: -5, scale: 1.05 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <stat.icon size={24} className={`mx-auto mb-3 ${isDark ? 'text-primary-400' : 'text-primary-600'}`} />
-                    <p className="text-3xl lg:text-4xl font-bold text-gradient mb-2">{stat.value}</p>
-                    <p className={`text-sm ${isDark ? 'text-gray-500' : 'text-gray-600'}`}>{stat.label}</p>
+                    <stat.icon size={24} className={`mx-auto mb-3 ${isDark ? 'text-purple-400' : 'text-purple-600'}`} />
+                    <p className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent mb-2">{stat.value}</p>
+                    <p className={`text-sm ${isDark ? 'text-[#94a3b8]' : 'text-gray-600'}`}>{stat.label}</p>
                   </motion.div>
                 ))}
               </div>
@@ -79,19 +79,19 @@ const About = ({ isDark = true }) => {
 
             {/* Right Column - Image/Visual */}
             <motion.div variants={itemVariants} className="relative">
-              <div className={`relative rounded-3xl p-8 lg:p-12 ${isDark ? 'glass' : 'bg-white shadow-xl'}`}>
+              <div className={`relative rounded-3xl p-8 lg:p-12 backdrop-blur-sm transition-all duration-500 ${isDark ? 'bg-[rgba(30,41,59,0.6)] border border-[#334155]' : 'bg-white shadow-xl border border-purple-200/50'}`}>
                 <div className="space-y-6">
-                  <div className={`p-4 rounded-xl ${isDark ? 'bg-white/5' : 'bg-gray-100'}`}>
-                    <p className={`text-sm mb-2 ${isDark ? 'text-gray-500' : 'text-gray-600'}`}>Current Focus</p>
-                    <p className={`text-lg font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>React & Modern Frontend Architecture</p>
+                  <div className={`p-4 rounded-xl transition-all duration-300 ${isDark ? 'bg-[rgba(30,41,59,0.4)] hover:bg-[rgba(30,41,59,0.6)]' : 'bg-gray-100 hover:bg-gray-200'}`}>
+                    <p className={`text-sm mb-2 ${isDark ? 'text-[#94a3b8]' : 'text-gray-600'}`}>Current Focus</p>
+                    <p className={`text-lg font-medium ${isDark ? 'text-[#e2e8f0]' : 'text-gray-900'}`}>React & Modern Frontend Architecture</p>
                   </div>
-                  <div className={`p-4 rounded-xl ${isDark ? 'bg-white/5' : 'bg-gray-100'}`}>
-                    <p className={`text-sm mb-2 ${isDark ? 'text-gray-500' : 'text-gray-600'}`}>Education</p>
-                    <p className={`text-lg font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>B.Tech AI & Data Science (2023-2027)</p>
+                  <div className={`p-4 rounded-xl transition-all duration-300 ${isDark ? 'bg-[rgba(30,41,59,0.4)] hover:bg-[rgba(30,41,59,0.6)]' : 'bg-gray-100 hover:bg-gray-200'}`}>
+                    <p className={`text-sm mb-2 ${isDark ? 'text-[#94a3b8]' : 'text-gray-600'}`}>Education</p>
+                    <p className={`text-lg font-medium ${isDark ? 'text-[#e2e8f0]' : 'text-gray-900'}`}>B.Tech AI & Data Science (2023-2027)</p>
                   </div>
-                  <div className={`p-4 rounded-xl ${isDark ? 'bg-white/5' : 'bg-gray-100'}`}>
-                    <p className={`text-sm mb-2 ${isDark ? 'text-gray-500' : 'text-gray-600'}`}>Location</p>
-                    <p className={`text-lg font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>Chandigarh, India</p>
+                  <div className={`p-4 rounded-xl transition-all duration-300 ${isDark ? 'bg-[rgba(30,41,59,0.4)] hover:bg-[rgba(30,41,59,0.6)]' : 'bg-gray-100 hover:bg-gray-200'}`}>
+                    <p className={`text-sm mb-2 ${isDark ? 'text-[#94a3b8]' : 'text-gray-600'}`}>Location</p>
+                    <p className={`text-lg font-medium ${isDark ? 'text-[#e2e8f0]' : 'text-gray-900'}`}>Chandigarh, India</p>
                   </div>
                 </div>
               </div>

@@ -1,61 +1,84 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Trash2, Eye, Star, Archive, Reply, Check } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Mail, Trash2, Eye, Star, Archive, Reply, Check, Loader2 } from 'lucide-react';
 import Modal from '../../components/admin/Modal';
 import Toast from '../../components/admin/Toast';
 
 const Messages = () => {
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      name: 'John Doe',
-      email: 'john@example.com',
-      subject: 'Project Collaboration',
-      message: 'Hi, I would like to discuss a potential project collaboration...',
-      date: '2026-03-20',
-      read: false,
-    },
-    {
-      id: 2,
-      name: 'Jane Smith',
-      email: 'jane@example.com',
-      subject: 'Question about your experience',
-      message: 'I was wondering if you could share more about your work at...',
-      date: '2026-03-19',
-      read: true,
-    },
-    {
-      id: 3,
-      name: 'Mike Johnson',
-      email: 'mike@example.com',
-      subject: 'Freelance Opportunity',
-      message: 'We have an exciting freelance opportunity that matches your skills...',
-      date: '2026-03-18',
-      read: true,
-    },
-  ]);
-
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false); // Changed to false - no loading for demo data
   const [selectedMessage, setSelectedMessage] = useState(null);
   const [isReadModalOpen, setIsReadModalOpen] = useState(false);
   const [toast, setToast] = useState(null);
+  const [pagination, setPagination] = useState({ page: 1, total: 0, pages: 0 });
 
-  const handleMarkAsRead = (messageId) => {
-    setMessages(messages.map(m => 
-      m.id === messageId ? { ...m, read: true } : m
-    ));
-    setToast({ message: 'Message marked as read', type: 'info' });
+  // Fetch messages from localStorage (demo mode)
+  useEffect(() => {
+    fetchMessages();
+  }, []);
+
+  const fetchMessages = async () => {
+    try {
+      // Get messages from localStorage (saved by contact form)
+      const storedMessages = localStorage.getItem('contactFormMessages');
+      
+      if (storedMessages) {
+        const parsedMessages = JSON.parse(storedMessages);
+        setMessages(parsedMessages);
+        setPagination({
+          page: 1,
+          total: parsedMessages.length,
+          pages: 1
+        });
+      } else {
+        setMessages([]);
+        setPagination({ page: 1, total: 0, pages: 0 });
+      }
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+      setToast({ message: 'Failed to load messages', type: 'error' });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleDeleteMessage = (messageId) => {
-    setMessages(messages.filter(m => m.id !== messageId));
-    setToast({ message: 'Message deleted successfully', type: 'success' });
+  const handleMarkAsRead = async (messageId) => {
+    try {
+      // Update localStorage
+      const storedMessages = JSON.parse(localStorage.getItem('contactFormMessages') || '[]');
+      const updatedMessages = storedMessages.map(m => 
+        m._id === messageId ? { ...m, isRead: true } : m
+      );
+      localStorage.setItem('contactFormMessages', JSON.stringify(updatedMessages));
+      
+      setMessages(updatedMessages);
+      setToast({ message: 'Message marked as read', type: 'info' });
+    } catch (error) {
+      console.error('Error marking as read:', error);
+      setToast({ message: 'Failed to mark as read', type: 'error' });
+    }
+  };
+
+  const handleDeleteMessage = async (messageId) => {
+    try {
+      // Update localStorage
+      const storedMessages = JSON.parse(localStorage.getItem('contactFormMessages') || '[]');
+      const filteredMessages = storedMessages.filter(m => m._id !== messageId);
+      localStorage.setItem('contactFormMessages', JSON.stringify(filteredMessages));
+      
+      setMessages(filteredMessages);
+      setToast({ message: 'Message deleted successfully', type: 'success' });
+    } catch (error) {
+      console.error('Error deleting message:', error);
+      setToast({ message: 'Failed to delete message', type: 'error' });
+    }
   };
 
   const handleViewMessage = (message) => {
     setSelectedMessage(message);
     setIsReadModalOpen(true);
-    if (!message.read) {
-      handleMarkAsRead(message.id);
+    if (!message.isRead) {
+      handleMarkAsRead(message._id);
     }
   };
 
@@ -112,7 +135,7 @@ const Messages = () => {
               <Star size={24} className="text-yellow-400" />
             </motion.div>
             <div>
-              <p className="text-3xl font-bold bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">{messages.filter(m => !m.read).length}</p>
+              <p className="text-3xl font-bold bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">{messages.filter(m => !m.isRead).length}</p>
               <p className="text-sm text-gray-400">Unread</p>
             </div>
           </div>
@@ -134,7 +157,7 @@ const Messages = () => {
               <Check size={24} className="text-green-400" />
             </motion.div>
             <div>
-              <p className="text-3xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">{messages.filter(m => m.read).length}</p>
+              <p className="text-3xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">{messages.filter(m => m.isRead).length}</p>
               <p className="text-sm text-gray-400">Read</p>
             </div>
           </div>
@@ -143,10 +166,29 @@ const Messages = () => {
 
       {/* Messages List */}
       <div className="space-y-4">
-        <AnimatePresence mode="popLayout">
-          {messages.map((message, index) => (
+        {loading ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex items-center justify-center py-20"
+          >
+            <Loader2 size={40} className="animate-spin text-purple-400" />
+            <p className="ml-4 text-gray-400">Loading messages...</p>
+          </motion.div>
+        ) : messages.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center py-20"
+          >
+            <Mail size={64} className="mx-auto mb-4 text-gray-600" />
+            <h3 className="text-2xl font-bold text-gray-400 mb-2">No messages yet</h3>
+            <p className="text-gray-500">Contact form submissions will appear here</p>
+          </motion.div>
+        ) : (
+          messages.map((message, index) => (
             <motion.div
-              key={message.id}
+              key={message._id}
               layout
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -154,7 +196,7 @@ const Messages = () => {
               transition={{ duration: 0.3, delay: index * 0.05 }}
               whileHover={{ x: 5, scale: 1.01 }}
               className={`glass p-6 rounded-2xl border transition-all duration-300 cursor-pointer group relative overflow-hidden ${
-                !message.read ? 'border-purple-500/50 bg-purple-500/5 shadow-lg shadow-purple-500/10' : 'border-white/5'
+                !message.isRead ? 'border-purple-500/50 bg-purple-500/5 shadow-lg shadow-purple-500/10' : 'border-white/5'
               }`}
               onClick={() => handleViewMessage(message)}
             >
@@ -172,7 +214,7 @@ const Messages = () => {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-1">
                       <h3 className="font-bold text-lg group-hover:text-purple-300 transition-colors">{message.name}</h3>
-                      {!message.read && (
+                      {!message.isRead && (
                         <motion.span 
                           initial={{ scale: 0 }}
                           animate={{ scale: 1 }}
@@ -181,7 +223,7 @@ const Messages = () => {
                           New
                         </motion.span>
                       )}
-                      {message.read && (
+                      {message.isRead && (
                         <span className="px-3 py-1 text-xs rounded-full bg-green-500/20 text-green-400 font-medium flex items-center gap-1">
                           <Check size={12} />
                           Read
@@ -196,7 +238,7 @@ const Messages = () => {
                         {message.email}
                       </span>
                       <span>•</span>
-                      <span>{message.date}</span>
+                      <span>{new Date(message.createdAt).toLocaleDateString()}</span>
                     </div>
                   </div>
                 </div>
@@ -218,7 +260,7 @@ const Messages = () => {
                   <motion.button
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleDeleteMessage(message.id);
+                      handleDeleteMessage(message._id);
                     }}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
@@ -230,8 +272,8 @@ const Messages = () => {
                 </div>
               </div>
             </motion.div>
-          ))}
-        </AnimatePresence>
+          ))
+        )}
       </div>
 
       {/* Read Message Modal */}

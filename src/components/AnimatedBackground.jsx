@@ -44,24 +44,23 @@ const AnimatedBackground = () => {
 
   return (
     <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-      {/* Animated gradient background */}
+      {/* Animated gradient background - Transparent with subtle overlays */}
       <div 
         className="absolute inset-0"
         style={{
           background: `
-            radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
-            radial-gradient(ellipse at 80% 80%, rgba(168, 85, 247, 0.12) 0%, transparent 50%),
-            radial-gradient(ellipse at 50% 50%, rgba(59, 130, 246, 0.08) 0%, transparent 60%),
-            #0a0a0f
+            radial-gradient(ellipse at 20% 20%, rgba(124, 58, 237, 0.06) 0%, transparent 50%),
+            radial-gradient(ellipse at 80% 80%, rgba(59, 130, 246, 0.04) 0%, transparent 50%),
+            radial-gradient(ellipse at 50% 50%, rgba(99, 102, 241, 0.03) 0%, transparent 60%)
           `,
         }}
       />
 
-      {/* Primary gradient orb */}
+      {/* Primary gradient orb - Purple */}
       <motion.div
         className="absolute top-0 left-1/4 w-[700px] h-[700px] rounded-full"
         style={{
-          background: 'radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(124, 58, 237, 0.12) 0%, transparent 70%)',
           filter: 'blur(80px)',
         }}
         animate={{
@@ -76,11 +75,11 @@ const AnimatedBackground = () => {
         }}
       />
 
-      {/* Secondary gradient orb */}
+      {/* Secondary gradient orb - Blue */}
       <motion.div
         className="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] rounded-full"
         style={{
-          background: 'radial-gradient(circle, rgba(168, 85, 247, 0.18) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%)',
           filter: 'blur(70px)',
         }}
         animate={{

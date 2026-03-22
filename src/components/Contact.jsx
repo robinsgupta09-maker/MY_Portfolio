@@ -9,6 +9,7 @@ const Contact = ({ isDark = true }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    subject: '',
     message: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -24,6 +25,7 @@ const Contact = ({ isDark = true }) => {
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = 'Invalid email address';
     }
+    if (!formData.subject.trim()) newErrors.subject = 'Subject is required';
     if (!formData.message.trim()) newErrors.message = 'Message is required';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -43,9 +45,10 @@ const Contact = ({ isDark = true }) => {
       formDataToSend.append('access_key', '3f37ab63-4172-49b6-98f2-df2b0ea48a57');
       formDataToSend.append('name', formData.name);
       formDataToSend.append('email', formData.email);
+      formDataToSend.append('subject', formData.subject);
       formDataToSend.append('message', formData.message);
-      formDataToSend.append('from_name', 'Portfolio Contact Form');
-      formDataToSend.append('subject', `New message from ${formData.name}`);
+      formDataToSend.append('from_name', 'Portfolio Contact Form - Robins Gupta');
+      formDataToSend.append('subject', `New Message from ${formData.name} - ${formData.subject}`);
       
       const response = await fetch(WEB3FORMS_ENDPOINT, {
         method: 'POST',
@@ -56,7 +59,29 @@ const Contact = ({ isDark = true }) => {
 
       if (data.success) {
         setIsSubmitted(true);
-        setFormData({ name: '', email: '', message: '' });
+        
+        // Save message to localStorage for admin panel
+        const newMessage = {
+          _id: Date.now().toString(),
+          name: formData.name,
+          email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+          isRead: false,
+          createdAt: new Date().toISOString()
+        };
+        
+        // Get existing messages or initialize empty array
+        const existingMessages = JSON.parse(localStorage.getItem('contactFormMessages') || '[]');
+        
+        // Add new message to the beginning
+        existingMessages.unshift(newMessage);
+        
+        // Save back to localStorage
+        localStorage.setItem('contactFormMessages', JSON.stringify(existingMessages));
+        
+        setFormData({ name: '', email: '', subject: '', message: '' });
+        setErrors({}); // Clear all validation errors
         
         // Reset success message after 5 seconds
         setTimeout(() => setIsSubmitted(false), 5000);
@@ -74,6 +99,7 @@ const Contact = ({ isDark = true }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    // Clear error for this field as user starts typing
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -187,6 +213,35 @@ const Contact = ({ isDark = true }) => {
                   />
                   {errors.email && (
                     <p className="mt-2 text-sm text-red-400">{errors.email}</p>
+                  )}
+                </div>
+
+                {/* Subject Field */}
+                <div>
+                  <label htmlFor="subject" className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                    Subject
+                  </label>
+                  <input
+                    type="text"
+                    id="subject"
+                    name="subject"
+                    value={formData.subject}
+                    onChange={handleChange}
+                    onFocus={() => setFocusedField('subject')}
+                    onBlur={() => setFocusedField(null)}
+                    className={`w-full px-6 py-4 rounded-xl border-2 transition-all duration-300 ${
+                      errors.subject 
+                        ? 'border-red-500' 
+                        : focusedField === 'subject'
+                        ? 'border-primary-500 shadow-[0_0_20px_rgba(99,102,241,0.3)]'
+                        : isDark 
+                        ? 'border-white/10 bg-dark-800/50 text-white placeholder-gray-500' 
+                        : 'border-gray-200 bg-white text-gray-900 placeholder-gray-400'
+                    } focus:outline-none`}
+                    placeholder="Project inquiry..."
+                  />
+                  {errors.subject && (
+                    <p className="mt-2 text-sm text-red-400">{errors.subject}</p>
                   )}
                 </div>
 
