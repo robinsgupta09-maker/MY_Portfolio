@@ -1,7 +1,9 @@
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { Github, Linkedin, Mail, Heart, ArrowUp } from 'lucide-react';
 
 const Footer = ({ isDark = true }) => {
+  const navigate = useNavigate();
   const currentYear = new Date().getFullYear();
 
   const scrollToTop = () => {
@@ -101,6 +103,15 @@ const Footer = ({ isDark = true }) => {
           <p className={`text-sm flex items-center justify-center gap-2 ${isDark ? 'text-gray-500' : 'text-gray-600'}`}>
             Made with <Heart size={14} className="text-red-500 fill-red-500" /> by Robins Gupta
           </p>
+          {/* Admin Portal Link */}
+          <div className="mt-4">
+            <button 
+              onClick={() => navigate('/admin')}
+              className="inline-flex items-center px-4 py-2 text-sm font-medium bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full hover:shadow-lg hover:shadow-purple-500/25 transition-all duration-300"
+            >
+              Admin Portal
+            </button>
+          </div>
         </motion.div>
       </div>
     </footer>

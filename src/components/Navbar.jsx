@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { Menu, X, Sun, Moon } from 'lucide-react';
 
 const Navbar = ({ isDark, toggleTheme }) => {
+  const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -31,6 +33,10 @@ const Navbar = ({ isDark, toggleTheme }) => {
       element.scrollIntoView({ behavior: 'smooth' });
     }
     setIsMobileMenuOpen(false);
+  };
+
+  const openAdminPortal = () => {
+    navigate('/admin');
   };
 
   return (
@@ -73,6 +79,16 @@ const Navbar = ({ isDark, toggleTheme }) => {
                   {link.name}
                 </motion.button>
               ))}
+
+              {/* Admin Portal Link */}
+              <motion.button
+                onClick={openAdminPortal}
+                className="px-4 py-2 text-sm font-medium bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full hover:shadow-lg hover:shadow-purple-500/25 transition-all duration-300"
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Admin Portal
+              </motion.button>
 
               {/* Theme Toggle */}
               <motion.button
@@ -124,6 +140,16 @@ const Navbar = ({ isDark, toggleTheme }) => {
                 {link.name}
               </motion.button>
             ))}
+            {/* Admin Portal Link - Mobile */}
+            <motion.button
+              onClick={openAdminPortal}
+              className="text-2xl font-semibold text-purple-400 text-left"
+              initial={{ x: -20, opacity: 0 }}
+              animate={isMobileMenuOpen ? { x: 0, opacity: 1 } : { x: -20, opacity: 0 }}
+              transition={{ delay: navLinks.length * 0.1 }}
+            >
+              Admin Portal
+            </motion.button>
           </div>
         </motion.div>
       </motion.div>
