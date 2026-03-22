@@ -13,7 +13,7 @@ const AdminLogin = () => {
     
     // Authentication using environment variables
     const validUsername = import.meta.env.VITE_ADMIN_USERNAME || 'admin';
-    const validPassword = import.meta.env.VITE_ADMIN_PASSWORD || 'Admin@123';
+    const validPassword = import.meta.env.VITE_ADMIN_PASSWORD || 'Qwerty@123';
     
     if (credentials.username === validUsername && credentials.password === validPassword) {
       localStorage.setItem('isAdminAuthenticated', 'true');
