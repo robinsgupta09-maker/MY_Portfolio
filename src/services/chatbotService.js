@@ -106,9 +106,13 @@ class ChatbotService {
     };
     
     if (this.apiKey && this.apiKey !== 'your_openai_api_key_here') {
+      // ⚠️ SECURITY WARNING: 
+      // Opening OpenAI client in browser exposes API key to users.
+      // In PRODUCTION, move this to a backend server and use a proxy endpoint.
+      // See: https://platform.openai.com/docs/guides/production-best-practices
       this.openai = new OpenAI({
         apiKey: this.apiKey,
-        dangerouslyAllowBrowser: true
+        dangerouslyAllowBrowser: true  // Only for development/demo
       });
     }
   }

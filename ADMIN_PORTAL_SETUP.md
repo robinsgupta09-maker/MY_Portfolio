@@ -29,12 +29,20 @@ Navigate directly to: `http://localhost:5174/admin-login`
 
 ## 🔑 Login Credentials
 
+### Default Credentials:
 ```
 Username: admin
-Password: 1234
+Password: Qwerty@123
 ```
 
-> ⚠️ **Note:** This is simple client-side authentication. For production, implement proper backend auth with JWT.
+### Customize Credentials:
+Create a `.env` file in the project root:
+```env
+VITE_ADMIN_USERNAME=your_username
+VITE_ADMIN_PASSWORD=your_secure_password
+```
+
+> ⚠️ **Note:** This is simple client-side authentication. For production, implement proper backend auth with JWT and password hashing.
 
 ---
 
@@ -133,7 +141,72 @@ The `/admin` route checks for authentication:
 
 ---
 
-## 🚀 Testing the Admin Portal
+## � Environment Variables Setup
+
+### Step 1: Create `.env` File
+A `.env` file has been created in your project root with default values.
+
+### Step 2: Customize Variables (Optional)
+**File:** `.env` at project root
+
+```env
+# Admin credentials
+VITE_ADMIN_USERNAME=admin
+VITE_ADMIN_PASSWORD=Qwerty@123
+
+# OpenAI API for Chatbot
+VITE_OPENAI_API_KEY=your_openai_api_key_here
+```
+
+### Step 3: Restart Development Server
+After editing `.env`, restart your dev server for changes to take effect:
+```bash
+npm run dev
+```
+
+### ⚠️ Security Notes:
+- **Never commit `.env` to Git** - Add to `.gitignore`
+- Use strong, unique passwords in production
+- Store API keys securely (use secrets manager for production)
+- Change default credentials before deployment
+- For production deployments, use proper backend authentication with JWT
+
+---
+
+## 🤖 Enable AI Chatbot (Optional)
+
+To enable the AI-powered chatbot with real responses:
+
+1. Get your OpenAI API key from [https://platform.openai.com/api-keys](https://platform.openai.com/api-keys)
+2. Add it to `.env`:
+   ```env
+   VITE_OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxx
+   ```
+3. Restart the dev server
+
+Without API key, chatbot works in **demo mode** with predefined responses.
+
+---
+## 🚨 Production Security Checklist
+
+Before deploying to production, ensure you:
+
+- ✅ Change admin password to a strong, unique password
+- ✅ Remove or disable demo credentials
+- ✅ Set up proper backend authentication (JWT recommended)
+- ✅ Implement password hashing (bcrypt)
+- ✅ Use HTTPS only
+- ✅ Add CSRF protection
+- ✅ Implement rate limiting on login attempts
+- ✅ Move OpenAI API calls to backend (don't expose key in frontend)
+- ✅ Add session expiration/refresh tokens
+- ✅ Audit all environment variables before deployment
+- ✅ Never commit `.env` file to version control
+
+For detailed info, see [ENV_SETUP_GUIDE.md](ENV_SETUP_GUIDE.md)
+
+---
+## �🚀 Testing the Admin Portal
 
 ### Step 1: Start Development Server
 ```bash
@@ -144,7 +217,7 @@ Server runs on: `http://localhost:5174`
 ### Step 2: Test Navigation
 1. ✅ Click "Admin Portal" in navbar
 2. ✅ Should redirect to login page
-3. ✅ Enter credentials: `admin / 1234`
+3. ✅ Enter credentials: `admin / Qwerty@123` (or your custom credentials from .env)
 4. ✅ Should navigate to dashboard
 
 ### Step 3: Test Dashboard Sections
@@ -253,9 +326,17 @@ The admin dashboard is fully responsive:
 - **Admin Login:** `http://localhost:5174/admin-login`
 - **Admin Dashboard:** `http://localhost:5174/admin`
 
-### Credentials:
+### Default Credentials:
 - **Username:** `admin`
-- **Password:** `1234`
+- **Password:** `Qwerty@123`
+
+### Custom Credentials:
+Set in `.env` file:
+```env
+VITE_ADMIN_USERNAME=your_username
+VITE_ADMIN_PASSWORD=your_password
+VITE_OPENAI_API_KEY=your_openai_key
+```
 
 ### Commands:
 ```bash

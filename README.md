@@ -156,18 +156,20 @@ npm install
 ```
 
 #### **3. Configure Environment Variables**
-Create `.env` file in root directory:
+
+A `.env` file has been created with default values. For detailed setup instructions, see [ENV_SETUP_GUIDE.md](ENV_SETUP_GUIDE.md).
+
+Optional customization:
 ```env
-# Admin Credentials
+# Admin Credentials (default: admin / Qwerty@123)
 VITE_ADMIN_USERNAME=admin
-VITE_ADMIN_PASSWORD=your_secure_password
+VITE_ADMIN_PASSWORD=Qwerty@123
 
-# OpenAI API (Optional - for chatbot)
+# OpenAI API Key (Optional - enables AI chatbot)
 VITE_OPENAI_API_KEY=your_openai_api_key
-
-# API URL (if using backend)
-VITE_API_URL=http://localhost:5000/api
 ```
+
+> 📖 For complete setup instructions, security best practices, and troubleshooting, read [ENV_SETUP_GUIDE.md](ENV_SETUP_GUIDE.md)
 
 #### **4. Run Development Server**
 ```bash
