@@ -17,7 +17,6 @@ import Footer from './components/Footer';
 import Chatbot from './components/Chatbot';
 import MouseSpotlight from './components/effects/MouseSpotlight';
 import ScrollProgress from './components/effects/ScrollProgress';
-import SecretFeature from './components/SecretFeature';
 import AdminPage from './pages/admin/AdminPage';
 import AdminLogin from './pages/admin/AdminLogin';
 
@@ -79,7 +78,6 @@ function App() {
                   {/* Global Effects */}
                   <ScrollProgress />
                   {isDark && <MouseSpotlight />}
-                  <SecretFeature />
 
                   {/* Cursor Glow Effect - Desktop Only */}
                   <CursorGlow />
