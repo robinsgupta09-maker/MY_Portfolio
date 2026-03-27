@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { Send, Github, Linkedin, Mail, Phone, MapPin, CheckCircle, Loader2 } from 'lucide-react';
+import { submitContactMessage } from '../services/firebaseMessagingService';
 
 const Contact = ({ isDark = true }) => {
   const ref = useRef(null);
@@ -38,55 +39,21 @@ const Contact = ({ isDark = true }) => {
     setIsSubmitting(true);
     
     try {
-      // Web3Forms API endpoint
-      const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
-      
-      const formDataToSend = new FormData();
-      formDataToSend.append('access_key', '3f37ab63-4172-49b6-98f2-df2b0ea48a57');
-      formDataToSend.append('name', formData.name);
-      formDataToSend.append('email', formData.email);
-      formDataToSend.append('subject', formData.subject);
-      formDataToSend.append('message', formData.message);
-      formDataToSend.append('from_name', 'Portfolio Contact Form - Robins Gupta');
-      formDataToSend.append('subject', `New Message from ${formData.name} - ${formData.subject}`);
-      
-      const response = await fetch(WEB3FORMS_ENDPOINT, {
-        method: 'POST',
-        body: formDataToSend,
+      // Submit to Firebase Firestore
+      const result = await submitContactMessage({
+        name: formData.name,
+        email: formData.email,
+        subject: formData.subject,
+        message: formData.message,
       });
 
-      const data = await response.json();
-
-      if (data.success) {
+      if (result.success) {
         setIsSubmitted(true);
-        
-        // Save message to localStorage for admin panel
-        const newMessage = {
-          _id: Date.now().toString(),
-          name: formData.name,
-          email: formData.email,
-          subject: formData.subject,
-          message: formData.message,
-          isRead: false,
-          createdAt: new Date().toISOString()
-        };
-        
-        // Get existing messages or initialize empty array
-        const existingMessages = JSON.parse(localStorage.getItem('contactFormMessages') || '[]');
-        
-        // Add new message to the beginning
-        existingMessages.unshift(newMessage);
-        
-        // Save back to localStorage
-        localStorage.setItem('contactFormMessages', JSON.stringify(existingMessages));
-        
         setFormData({ name: '', email: '', subject: '', message: '' });
-        setErrors({}); // Clear all validation errors
+        setErrors({});
         
         // Reset success message after 5 seconds
         setTimeout(() => setIsSubmitted(false), 5000);
-      } else {
-        throw new Error(data.message || 'Form submission failed');
       }
     } catch (error) {
       console.error('Error submitting form:', error);
