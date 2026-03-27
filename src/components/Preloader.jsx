@@ -6,13 +6,27 @@ const Preloader = ({ onComplete }) => {
   const [isComplete, setIsComplete] = useState(false);
 
   useEffect(() => {
+    // Safety timeout - if loading takes too long, complete anyway
+    const safetyTimeout = setTimeout(() => {
+      setProgress(100);
+      setTimeout(() => {
+        setIsComplete(true);
+        if (typeof onComplete === 'function') {
+          onComplete();
+        }
+      }, 300);
+    }, 3000);
+
     const interval = setInterval(() => {
       setProgress(prev => {
         if (prev >= 100) {
           clearInterval(interval);
+          clearTimeout(safetyTimeout);
           setTimeout(() => {
             setIsComplete(true);
-            setTimeout(onComplete, 500);
+            if (typeof onComplete === 'function') {
+              onComplete();
+            }
           }, 300);
           return 100;
         }
@@ -20,7 +34,10 @@ const Preloader = ({ onComplete }) => {
       });
     }, 100);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      clearTimeout(safetyTimeout);
+    };
   }, [onComplete]);
 
   return (

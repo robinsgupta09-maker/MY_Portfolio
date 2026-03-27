@@ -17,6 +17,20 @@ body {
   background-color: #0a0a0f;
   color: #e5e7eb;
   overflow-x: hidden;
+  display: block !important;
+  visibility: visible !important;
+}
+
+#root {
+  display: block !important;
+  visibility: visible !important;
+}
+
+/* Ensure loading states are visible */
+.preloader {
+  display: flex !important;
+  visibility: visible !important;
+  background-color: #0a0a0f !important;
 }
 
 /* Shimmer Animation */

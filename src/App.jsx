@@ -31,6 +31,18 @@ function App() {
     setIsDark(prefersDark);
   }, []);
 
+  // Safety timeout - ensure loading never gets stuck
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (isLoading) {
+        console.warn('Loading timeout reached, forcing completion');
+        setIsLoading(false);
+      }
+    }, 5000);
+
+    return () => clearTimeout(timeout);
+  }, [isLoading]);
+
   const toggleTheme = () => {
     setIsDark(!isDark);
   };
