@@ -19,15 +19,35 @@ import MouseSpotlight from './components/effects/MouseSpotlight';
 import ScrollProgress from './components/effects/ScrollProgress';
 import AdminPage from './pages/admin/AdminPage';
 import AdminLogin from './pages/admin/AdminLogin';
+import EasterEggModal from './components/EasterEggModal';
+import secretCodeService from './services/secretCodeService';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [isDark, setIsDark] = useState(true);
+  const [easterEggData, setEasterEggData] = useState(null);
+  const [showEasterEgg, setShowEasterEgg] = useState(false);
 
   useEffect(() => {
     // Check system preference for dark mode
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     setIsDark(prefersDark);
+  }, []);
+
+  // Initialize Secret Code Easter Egg
+  useEffect(() => {
+    const handleSecretFound = (data) => {
+      setEasterEggData(data);
+      setShowEasterEgg(true);
+    };
+
+    // Start listening for secret codes
+    secretCodeService.startListening(handleSecretFound);
+
+    // Cleanup on unmount
+    return () => {
+      secretCodeService.stopListening();
+    };
   }, []);
 
   // Safety timeout - ensure loading never gets stuck
@@ -54,6 +74,11 @@ function App() {
 
   return (
     <Router>
+      <EasterEggModal 
+        isOpen={showEasterEgg} 
+        data={easterEggData} 
+        onClose={() => setShowEasterEgg(false)} 
+      />
       <AnimatePresence mode="wait">
         {isLoading ? (
           <Preloader key="preloader" onComplete={() => setIsLoading(false)} />
