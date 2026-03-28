@@ -119,9 +119,33 @@ const EasterEggModal = ({ isOpen, data, onClose }) => {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
-                    className="text-slate-300 mb-6"
+                    className="text-slate-300 mb-6 text-sm"
                   >
                     {data.subtitle}
+                  </motion.p>
+                )}
+
+                {/* Description */}
+                {data?.description && (
+                  <motion.p
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.25 }}
+                    className="text-slate-200 mb-4 text-sm leading-relaxed px-2"
+                  >
+                    {data.description}
+                  </motion.p>
+                )}
+
+                {/* Extra Details */}
+                {data?.extraDetails && (
+                  <motion.p
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                    className="text-pink-300 mb-6 text-sm italic leading-relaxed px-2 bg-pink-500/10 rounded-lg py-3 border border-pink-500/20"
+                  >
+                    {data.extraDetails}
                   </motion.p>
                 )}
 
@@ -129,10 +153,10 @@ const EasterEggModal = ({ isOpen, data, onClose }) => {
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                  className="font-mono text-sm text-purple-300 bg-black/30 rounded-lg px-4 py-2 mb-6 border border-purple-500/20"
+                  transition={{ delay: 0.35 }}
+                  className="font-mono text-xs text-purple-300 bg-black/30 rounded-lg px-4 py-2 mb-6 border border-purple-500/20"
                 >
-                  Secret Code: <span className="text-pink-300">{data?.name}</span>
+                  Secret Code: <span className="text-pink-300 font-semibold">{data?.name}</span>
                 </motion.div>
 
                 {/* Close button */}

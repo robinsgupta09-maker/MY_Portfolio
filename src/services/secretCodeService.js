@@ -1,118 +1,108 @@
-/**
- * Secret Code Service - Easter Egg Feature
- * Listens for keyboard input and triggers actions on secret code detection
- */
-
+// Secret codes configuration
 const SECRET_CODES = {
   muskan: {
     name: 'muskan',
-    message: 'You found the secret! 😊',
+    message: 'I Love You, Muskan! 💕',
     subtitle: 'Welcome to the hidden realm...',
+    description: 'This secret message is just for you! You found the easter egg hidden deep in my portfolio. This shows how special you are to me! 🌸',
+    extraDetails: 'Thank you for being the most amazing person in my life. Every moment with you is precious! ✨',
   },
   admin: {
     name: 'admin',
     message: 'Admin Portal Detected! 🔐',
     subtitle: 'Authorized access only...',
+    description: 'You have found the admin access portal!',
   },
 };
 
-const MAX_INPUT_LENGTH = 20; // Prevent memory overflow
-const RESET_TIMEOUT = 5000; // Reset after 5 seconds of inactivity
+let typedSequence = '';
+let resetTimer = null;
+let onSecretFoundCallback = null;
+let isListening = false;
 
-class SecretCodeService {
-  constructor() {
-    this.typedInput = '';
-    this.resetTimer = null;
-    this.listeners = [];
-    this.isActive = false;
-  }
+// Log to both console and a global variable for debugging
+window.__secretDebug = {
+  typedSequence: '',
+  lastKey: '',
+  eventsFired: 0,
+};
 
-  /**
-   * Start listening for keyboard input
-   */
-  startListening(onSecretFound) {
-    if (this.isActive) return;
+const handleKeyDown = (e) => {
+  window.__secretDebug.eventsFired++;
+  window.__secretDebug.lastKey = e.key;
+  
+  const key = e.key.toLowerCase();
 
-    this.isActive = true;
-    this.onSecretFound = onSecretFound;
+  // Only letters (a-z)
+  if (/^[a-z]$/.test(key)) {
+    typedSequence += key;
+    window.__secretDebug.typedSequence = typedSequence;
+    
+    console.log('📝 Key pressed:', key);
+    console.log('🔤 Sequence:', typedSequence);
 
-    // Letter keys only (a-z, A-Z)
-    const handleKeyPress = (event) => {
-      // Ignore input in form fields
-      if (
-        event.target.tagName === 'INPUT' ||
-        event.target.tagName === 'TEXTAREA'
-      ) {
-        return;
-      }
+    // Keep only last 20 characters
+    if (typedSequence.length > 20) {
+      typedSequence = typedSequence.slice(-20);
+    }
 
-      const key = event.key?.toLowerCase();
+    // Clear previous reset timer
+    clearTimeout(resetTimer);
 
-      // Only capture alphabetic characters
-      if (key && /^[a-z]$/.test(key)) {
-        this.typedInput += key;
-
-        // Limit input length
-        if (this.typedInput.length > MAX_INPUT_LENGTH) {
-          this.typedInput = this.typedInput.slice(-MAX_INPUT_LENGTH);
+    // Check all secret codes
+    for (const [secretCode, data] of Object.entries(SECRET_CODES)) {
+      if (typedSequence.includes(secretCode)) {
+        console.log('🎉🎉🎉 FOUND SECRET:', secretCode);
+        console.log('📢 Calling callback...');
+        if (onSecretFoundCallback) {
+          onSecretFoundCallback(data);
         }
-
-        // Check if any secret code matches
-        this.checkForSecretCode();
-
-        // Reset timer
-        this.resetOnTimeout();
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyPress);
-    this.keyPressListener = handleKeyPress;
-  }
-
-  /**
-   * Check if typed input contains any secret code
-   */
-  checkForSecretCode() {
-    for (const [code, data] of Object.entries(SECRET_CODES)) {
-      if (this.typedInput.includes(code)) {
-        this.onSecretFound?.(data);
-        this.resetInput();
+        typedSequence = '';
+        window.__secretDebug.typedSequence = '';
         return;
       }
     }
+
+    // Reset after 5 seconds of inactivity
+    resetTimer = setTimeout(() => {
+      console.log('⏱️ Reset - no activity');
+      typedSequence = '';
+      window.__secretDebug.typedSequence = '';
+    }, 5000);
   }
+};
 
-  /**
-   * Reset typed input after timeout of inactivity
-   */
-  resetOnTimeout() {
-    clearTimeout(this.resetTimer);
+const secretCodeService = {
+  init(callback) {
+    console.log('✅ INITIALIZING SECRET CODE SERVICE');
+    console.log('📞 Callback:', callback ? '✓ Provided' : '✗ Missing');
+    
+    isListening = true;
+    onSecretFoundCallback = callback;
+    
+    // Add listener
+    document.addEventListener('keydown', handleKeyDown);
+    console.log('✅ Event listener added');
+    
+    // Global debug access
+    window.__secretCodeDebug = {
+      sequence: () => window.__secretDebug.typedSequence,
+      reset: () => { typedSequence = ''; window.__secretDebug.typedSequence = ''; },
+      status: () => ({ isListening, typedSequence, eventsFired: window.__secretDebug.eventsFired })
+    };
+    
+    console.log('💡 Debug commands:');
+    console.log('  window.__secretCodeDebug.sequence()     - Get typed sequence');
+    console.log('  window.__secretCodeDebug.status()       - Get status');
+    console.log('  window.__secretCodeDebug.reset()        - Reset sequence');
+  },
 
-    this.resetTimer = setTimeout(() => {
-      this.typedInput = '';
-    }, RESET_TIMEOUT);
-  }
+  destroy() {
+    console.log('🛑 Destroying secret code service');
+    document.removeEventListener('keydown', handleKeyDown);
+    clearTimeout(resetTimer);
+    isListening = false;
+  },
+};
 
-  /**
-   * Reset typed input immediately
-   */
-  resetInput() {
-    this.typedInput = '';
-    clearTimeout(this.resetTimer);
-  }
-
-  /**
-   * Stop listening for keyboard input
-   */
-  stopListening() {
-    if (this.keyPressListener) {
-      document.removeEventListener('keydown', this.keyPressListener);
-    }
-    clearTimeout(this.resetTimer);
-    this.isActive = false;
-    this.typedInput = '';
-  }
-}
-
-// Export singleton instance
-export default new SecretCodeService();
+export default secretCodeService;

@@ -37,16 +37,17 @@ function App() {
   // Initialize Secret Code Easter Egg
   useEffect(() => {
     const handleSecretFound = (data) => {
+      console.log('🎉 Secret triggered!', data);
       setEasterEggData(data);
       setShowEasterEgg(true);
     };
 
-    // Start listening for secret codes
-    secretCodeService.startListening(handleSecretFound);
+    // Initialize secret code listener
+    secretCodeService.init(handleSecretFound);
 
     // Cleanup on unmount
     return () => {
-      secretCodeService.stopListening();
+      secretCodeService.destroy();
     };
   }, []);
 
